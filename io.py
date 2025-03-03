@@ -102,10 +102,11 @@ class StationWeather:
 
         self.data=df[df['NOM_USUEL']==station_name]
         self.data.reset_index(drop=True,inplace =True)
-        for k in translate.keys():
-            self.data[k]=self.data[k].apply(lambda x: x*translate[k][1])
-        self.data.rename(columns=
-                         {k : v[0] for k,v in translate.items()},inplace=True)
+        # for k in translate.keys():
+        #     self.data[k]=self.data[k].fillna(0) #Avoid empty columns, better solution to be found
+        #     self.data[k]=self.data[k].apply(lambda x: x*translate[k][1])
+        # self.data.rename(columns=
+        #                  {k : v[0] for k,v in translate.items()},inplace=True)
     
     def localize(self,time_zone) :
         if self.data is None :
@@ -127,9 +128,9 @@ class StationWeather:
     
     def gap_fill(self) :
 
-        # We fill sky covers with 0 when NaN
-        self.data[['total_sky_cover','Nl','Nm','Nh']] = self.data[
-            ['total_sky_cover','Nl','Nm','Nh']].fillna(value=0)
+        # # We fill sky covers with 0 when NaN
+        # self.data[['total_sky_cover','Nl','Nm','Nh']] = self.data[
+        #     ['total_sky_cover','Nl','Nm','Nh']].fillna(value=0)
         # We assume that total sky cover = opaque sky cover = "nébulosité" (seems to be done in existing epw files)
         self.data['opaque_sky_cover'] =self.data['total_sky_cover']
         #We create a DAY column which is the day between 0 and 365
@@ -183,27 +184,28 @@ class StationWeather:
 
 # def import_csv_station(path) :
 #%%
-# w=StationWeather()
-# w.name ='paris_montsouris'
-# p = "/home/thibault.chevilliet@enpc.fr/Documents/Fichiers_meteo/H_75_2010-2019.csv"
-# w.import_source(p,'PARIS-MONTSOURIS')
-# #%%
-# w.localize(1)
-# # w.wmo_code_to_epw_code()
-# w.gap_fill()
-# w.time_slicer(2018)
-# w.to_epw("/home/thibault.chevilliet@enpc.fr/Documents/Fichiers_meteo/2018_Montsouris.epw")
-# #%%
-# import matplotlib.pyplot as plt
-# fig,ax = plt.subplots()
+w=StationWeather()
+w.name ='paris_montsouris'
+p = "/home/thibault.chevilliet@enpc.fr/Documents/Fichiers_meteo/H_75_2010-2019.csv"
+w.import_source(p,'PARIS-MONTSOURIS')
+#%%
+w.localize(1)
+# w.wmo_code_to_epw_code()
+w.gap_fill()
+w.time_slicer(2018)
+w.to_epw("/home/thibault.chevilliet@enpc.fr/Documents/Fichiers_meteo/2018_Montsouris.epw")
+#%%
+import matplotlib.pyplot as plt
+fig,ax = plt.subplots()
 # diff=[a+b for a,b in zip(w.data.diffuse_horizontal_radiation[2000:2168],w.data.direct_normal_radiation[2000:2168])]
 # ax.plot(range(2000,2168),w.data.global_horizontal_radiation[2000:2168],c='blue')
-# # ax.plot(range(2000,2168),w.data.diffuse_horizontal_radiation[2000:2168],c='green')
-# # ax.plot(range(2000,2168),w.data.direct_normal_radiation[2000:2168],c='orange')
+# ax.plot(range(2000,2168),w.data.diffuse_horizontal_radiation[2000:2168],c='green')
+# ax.plot(range(2000,2168),w.data.direct_normal_radiation[2000:2168],c='orange')
 # ax.plot(range(2000,2168),diff,c='red')
-# # to_graph=[gamma(h,d,w.time_zone,w.latitude) for (h,d) in zip(w.data.hour[:100],w.data.DAY[:100])]
-# # to_graph2 = [solar_elevation(h,d,w.time_zone,w.latitude) for (h,d) in zip(w.data.hour[:100],w.data.DAY[:100])]
-# # ax.plot(range(100),to_graph,c='black')
-# # ax.plot(range(100),to_graph2,c='blue')
-# # ax.plot(range(24),h)
-# plt.show()
+# to_graph=[gamma(h,d,w.time_zone,w.latitude) for (h,d) in zip(w.data.hour[:100],w.data.DAY[:100])]
+# to_graph2 = [solar_elevation(h,d,w.time_zone,w.latitude) for (h,d) in zip(w.data.hour[:100],w.data.DAY[:100])]
+# ax.plot(range(100),to_graph,c='black')
+# ax.plot(range(100),to_graph2,c='blue')
+# ax.plot(range(24),h)
+ax.plot(range(8760),w.data['total_sky_cover'])
+plt.show()
