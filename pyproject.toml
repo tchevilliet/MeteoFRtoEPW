@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "meteofrtoepw"
+version = "1.0.0"
+description = "Conversion de données météo françaises (Météo-France) au format EPW pour EnergyPlus / Ladybug"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+    { name = "Thibault Chevilliet", email = "thibault.chevilliet@enpc.fr" }
+]
+requires-python = ">=3.8"
+dependencies = [
+    "pandas>=1.3",
+    "numpy>=1.21",
+    "ladybug-core>=0.44",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "jupyter"]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["meteofrtoepw*"]

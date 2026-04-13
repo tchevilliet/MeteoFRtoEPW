@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# IDE / Éditeurs
+.spyproject/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environnements virtuels
+.env
+.venv
+env/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Données et fichiers générés
+*.epw
+*.csv
+
+# Divers
+old/
+.DS_Store
+Thumbs.db
