@@ -8,6 +8,7 @@ Format EPW : https://climate.onebuilding.org/papers/EnergyPlus_Weather_File_Form
 @author: thibault.chevilliet
 """
 
+from numpy import int_
 import pandas as pd
 from ladybug.epw import EPW
 from ladybug.location import Location
@@ -46,7 +47,7 @@ HEADER_TRANSLATE = {
     'T':    ('dry_bulb_temperature',         1.0),
     'TD':   ('dew_point_temperature',        1.0),
     'U':    ('relative_humidity',            1.0),
-    'PSTAT':('atmospheric_station_pressure', 0.1),    # hPa → kPa
+    'PSTAT':('atmospheric_station_pressure', 100),    # hPa → Pa
     'GLO':  ('global_horizontal_radiation',  10000 / 3600),  # J/cm² → Wh/m²
     'DD':   ('wind_direction',               1.0),
     'FF':   ('wind_speed',                   1.0),
@@ -101,7 +102,7 @@ class StationWeather:
         translator: dict = None,
         time_zone: int = None,
         year : int = None,
-        station_id : str = None
+        station_id : int = 0
     ):
         self.name = name
         self.station = station
@@ -114,7 +115,7 @@ class StationWeather:
         self.translator = translator if translator is not None else HEADER_TRANSLATE
         self.time_zone = time_zone
         self.year = year
-        self.station_id = str(station_id)
+        self.station_id = int(station_id)
 
         # DataFrame de sortie (colonnes EPW)
         self.output_df = pd.DataFrame(columns=OUTPUT_COLUMNS)
@@ -173,7 +174,8 @@ class StationWeather:
         self.latitude  = float(self.data['LAT'].iloc[0])
         self.longitude = float(self.data['LON'].iloc[0])
         self.altitude  = float(self.data['ALTI'].iloc[0])
-        self.station_id  = float(self.data['NUM_POSTE'].iloc[0])
+        
+        self.station_id  = int(self.data['NUM_POSTE'].iloc[0])
         self.time_zone = time_zone
 
     def time_slicer(self, year: int) -> None:
